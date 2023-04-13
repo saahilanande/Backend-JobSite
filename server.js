@@ -24,6 +24,10 @@ app.use("/user", userRouter);
 app.use("/post", postRouter);
 app.use("/application", applicationRouter);
 
+app.get("/", (req, res) => {
+  res.send("Express on Vercel");
+});
+
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Listening on: ${port}`);

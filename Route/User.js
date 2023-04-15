@@ -1,5 +1,6 @@
 const router = require("express").Router();
 let user = require("../Modal/User.model");
+let apiKeyModel = require("../Modal/ApiKey.model");
 const Joi = require("joi");
 
 let apiKey = "saahil";
@@ -92,17 +93,24 @@ router.route("/adduser").post(async (req, res) => {
   if (validation.error) {
     res.send(validation.error.message);
   } else {
+    const apiKey = genAPIKey();
     const userData = req.body;
     const newUser = new user({
       first_name: userData.first_name,
       last_name: userData.last_name,
       email: userData.email,
-      api_key: genAPIKey(),
+      api_key: apiKey,
       usage: 50,
       password: userData.password,
       phone: userData.phone,
       location: userData.location,
       skills: userData.skills,
+    });
+
+    const newApiKey = new apiKeyModel({
+      email: userData.email,
+      api_key: apiKey,
+      usage: 50,
     });
 
     await newUser
@@ -113,6 +121,10 @@ router.route("/adduser").post(async (req, res) => {
       .catch((err) => {
         res.status(400).json("Error" + err);
       });
+
+    await newApiKey.save().catch((err) => {
+      res.status(400).json("Error" + err);
+    });
   }
 });
 

@@ -1,5 +1,6 @@
 const router = require("express").Router();
 let employer = require("../Modal/Employer.model");
+let apiKeyModel = require("../Modal/ApiKey.model");
 const Joi = require("joi");
 
 let apiKey = "saahil";
@@ -86,18 +87,29 @@ router.route("/addemployer").post(async (req, res) => {
   if (validation.error) {
     res.send(validation.error.message);
   } else {
+    const apiKey = genAPIKey();
     const employerData = req.body;
     const newEmployer = new employer({
       company_name: employerData.company_name,
       name: employerData.name,
       email: employerData.email,
       password: employerData.password,
-      api_key: genAPIKey(),
+      api_key: apiKey,
       usage: 50,
       phone: employerData.phone,
       location: employerData.location,
       industry: employerData.industry,
       company_description: employerData.company_description,
+    });
+
+    const newApiKey = new apiKeyModel({
+      email: employerData.email,
+      api_key: apiKey,
+      usage: 50,
+    });
+
+    await newApiKey.save().catch((err) => {
+      res.status(400).json("Error" + err);
     });
 
     await newEmployer

@@ -4,16 +4,16 @@ const Joi = require("joi");
 
 let apiKey = "saahil";
 
-router.route("/").get(async (req, res) => {
-  if (req.query.api_key == apiKey) {
-    await user
-      .find()
-      .then((users) => res.json(users))
-      .catch((err) => res.status(400).json("Error" + err));
-  } else {
-    res.send("unathorized access");
-  }
-});
+// router.route("/").get(async (req, res) => {
+//   if (req.query.api_key == apiKey) {
+//     await user
+//       .find()
+//       .then((users) => res.json(users))
+//       .catch((err) => res.status(400).json("Error" + err));
+//   } else {
+//     res.send("unathorized access");
+//   }
+// });
 
 router.route("/:id").get(async (req, res) => {
   if (req.query.api_key == apiKey) {
@@ -57,7 +57,7 @@ router.route("/adduser").post(async (req, res) => {
   const validation = schema.validate(req.body);
 
   if (validation.error) {
-    res.send(validation.error);
+    res.send(validation.error.message);
   } else {
     const userData = req.body;
     const newUser = new user({

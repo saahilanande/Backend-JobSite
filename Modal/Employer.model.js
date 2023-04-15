@@ -6,6 +6,8 @@ const EmployerSchema = new mongoose.Schema(
     name: { type: String, lowercase: true, required: true },
     email: { type: String, lowercase: true, required: true },
     password: { type: String, required: true },
+    api_key: { type: String, lowercase: true, required: true },
+    usage: { type: Number, require: true },
     phone: { type: Number, min: 0, max: 99999999999, default: 0 },
     location: { type: String },
     industry: { type: String },

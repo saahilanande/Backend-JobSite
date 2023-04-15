@@ -1,12 +1,13 @@
 const router = require("express").Router();
 let employer = require("../Modal/Employer.model");
+const Joi = require("joi");
 
-router.route("/").get(async (req, res) => {
-  await employer
-    .find()
-    .then((emp) => res.json(emp))
-    .catch((err) => res.status(400).json("Error" + err));
-});
+// router.route("/").get(async (req, res) => {
+//   await employer
+//     .find()
+//     .then((emp) => res.json(emp))
+//     .catch((err) => res.status(400).json("Error" + err));
+// });
 
 router.route("/:id").get(async (req, res) => {
   if (req.query.api_key == apiKey) {
@@ -28,26 +29,47 @@ router.route("/:id").get(async (req, res) => {
 });
 
 router.route("/addemployer").post(async (req, res) => {
-  const employerData = req.body;
-  const newEmployer = new employer({
-    company_name: employerData.company_name,
-    name: employerData.name,
-    email: employerData.email,
-    password: employerData.password,
-    phone: employerData.phone,
-    location: employerData.location,
-    industry: employerData.industry,
-    company_description: employerData.company_description,
+  const schema = Joi.object({
+    company_name: Joi.string().min(2).required(),
+    name: Joi.string().min(2).required(),
+    email: Joi.string().min(2).required(),
+    password: Joi.string().alphanum().required(),
+    api_key: Joi.string().min(2).required(),
+    usage: Joi.number().required(),
+    phone: Joi.number().integer().min(10000000).max(99999999999),
+    location: Joi.string().min(2),
+    industry: Joi.string(),
+    company_description: Joi.string(),
   });
 
-  await newEmployer
-    .save()
-    .then(() => {
-      res.json("New Employer Added");
-    })
-    .catch((err) => {
-      res.status(400).json("Error" + err);
+  const validation = schema.validate(req.body);
+
+  if (validation.error) {
+    res.send(validation.error.message);
+  } else {
+    const employerData = req.body;
+    const newEmployer = new employer({
+      company_name: employerData.company_name,
+      name: employerData.name,
+      email: employerData.email,
+      password: employerData.password,
+      api_key: employerData.api_key,
+      usage: employerData.usage,
+      phone: employerData.phone,
+      location: employerData.location,
+      industry: employerData.industry,
+      company_description: employerData.company_description,
     });
+
+    await newEmployer
+      .save()
+      .then(() => {
+        res.json("New Employer Added");
+      })
+      .catch((err) => {
+        res.status(400).json("Error" + err);
+      });
+  }
 });
 
 router.route("/delete/:id").delete(async (req, res) => {

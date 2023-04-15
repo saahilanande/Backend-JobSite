@@ -4,15 +4,17 @@ const Joi = require("joi");
 
 let apiKey = "saahil";
 
+const genAPIKey = () => {
+  return [...Array(30)]
+    .map((e) => ((Math.random() * 36) | 0).toString(36))
+    .join("");
+};
+
 // router.route("/").get(async (req, res) => {
-//   if (req.query.api_key == apiKey) {
-//     await user
-//       .find()
-//       .then((users) => res.json(users))
-//       .catch((err) => res.status(400).json("Error" + err));
-//   } else {
-//     res.send("unathorized access");
-//   }
+//   await user
+//     .find()
+//     .then((users) => res.json(users))
+//     .catch((err) => res.status(400).json("Error" + err));
 // });
 
 router.route("/validateuser").get(async (req, res) => {
@@ -48,8 +50,6 @@ router.route("/validateuser").get(async (req, res) => {
   }
 });
 
-
-
 router.route("/:id").get(async (req, res) => {
   if (req.query.api_key == apiKey) {
     await user
@@ -81,8 +81,6 @@ router.route("/adduser").post(async (req, res) => {
     first_name: Joi.string().min(2).required(),
     last_name: Joi.string().min(2).required(),
     email: Joi.string().min(2).required(),
-    api_key: Joi.string().min(2).required(),
-    usage: Joi.number().required(),
     password: Joi.string().alphanum().required(),
     phone: Joi.number().integer().min(10000000).max(99999999999),
     location: Joi.string().min(2),
@@ -99,8 +97,8 @@ router.route("/adduser").post(async (req, res) => {
       first_name: userData.first_name,
       last_name: userData.last_name,
       email: userData.email,
-      api_key: userData.api_key,
-      usage: userData.usage,
+      api_key: genAPIKey(),
+      usage: 50,
       password: userData.password,
       phone: userData.phone,
       location: userData.location,

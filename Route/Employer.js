@@ -2,14 +2,20 @@ const router = require("express").Router();
 let employer = require("../Modal/Employer.model");
 const Joi = require("joi");
 
+let apiKey = "saahil";
+
+const genAPIKey = () => {
+  return [...Array(30)]
+    .map((e) => ((Math.random() * 36) | 0).toString(36))
+    .join("");
+};
+
 // router.route("/").get(async (req, res) => {
 //   await employer
 //     .find()
 //     .then((emp) => res.json(emp))
 //     .catch((err) => res.status(400).json("Error" + err));
 // });
-
-let apiKey = "saahil";
 
 router.route("/validateemployer").get(async (req, res) => {
   if (req.query.api_key == apiKey) {
@@ -69,8 +75,6 @@ router.route("/addemployer").post(async (req, res) => {
     name: Joi.string().min(2).required(),
     email: Joi.string().min(2).required(),
     password: Joi.string().alphanum().required(),
-    api_key: Joi.string().min(2).required(),
-    usage: Joi.number().required(),
     phone: Joi.number().integer().min(10000000).max(99999999999),
     location: Joi.string().min(2),
     industry: Joi.string(),
@@ -88,8 +92,8 @@ router.route("/addemployer").post(async (req, res) => {
       name: employerData.name,
       email: employerData.email,
       password: employerData.password,
-      api_key: employerData.api_key,
-      usage: employerData.usage,
+      api_key: genAPIKey(),
+      usage: 50,
       phone: employerData.phone,
       location: employerData.location,
       industry: employerData.industry,

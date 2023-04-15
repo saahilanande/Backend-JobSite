@@ -7,6 +7,8 @@ const UserSchema = new mongoose.Schema(
     email: { type: String, lowercase: true, required: true },
     password: { type: String, required: true },
     phone: { type: Number, min: 0, max: 99999999999, default: 0 },
+    api_key: { type: String, lowercase: true, required: true },
+    usage: { type: Number, require: true },
     location: { type: String, lowercase: true },
     skills: [
       {

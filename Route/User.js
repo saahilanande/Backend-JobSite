@@ -11,6 +11,17 @@ const genAPIKey = () => {
     .join("");
 };
 
+const getAllApikey = async () => {
+  const apikeys = [];
+  await apiKeyModel
+    .find()
+    .select("api_key -_id")
+    .then((data) => apikeys.push(data));
+  console.log(apikeys);
+};
+
+getAllApikey();
+
 // router.route("/").get(async (req, res) => {
 //   await user
 //     .find()

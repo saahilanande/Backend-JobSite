@@ -15,6 +15,41 @@ let apiKey = "saahil";
 //   }
 // });
 
+router.route("/validateuser").get(async (req, res) => {
+  if (req.query.api_key == apiKey) {
+    const schema = Joi.object({
+      email: Joi.string().required(),
+      password: Joi.string().required(),
+    });
+
+    const validation = schema.validate(req.body);
+
+    if (validation.error) {
+      res.send(validation.error.message);
+    } else {
+      const userCredentials = {
+        email: req.body.email,
+        password: req.body.password,
+      };
+
+      await user
+        .findOne(userCredentials)
+        .then((user) => {
+          if (user) {
+            res.status(200).json("Success");
+          } else {
+            res.status(400).json("INVALID Credentails");
+          }
+        })
+        .catch((err) => res.status(400).json(err));
+    }
+  } else {
+    res.send("unathorized access");
+  }
+});
+
+
+
 router.route("/:id").get(async (req, res) => {
   if (req.query.api_key == apiKey) {
     await user

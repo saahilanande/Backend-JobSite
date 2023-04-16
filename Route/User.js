@@ -12,15 +12,13 @@ const genAPIKey = () => {
 };
 
 const getAllApikey = async () => {
-  const apikeys = [];
+  const apiKeysList = [];
   await apiKeyModel
     .find()
     .select("api_key -_id")
-    .then((data) => apikeys.push(data));
-  console.log(apikeys);
+    .then((data) => data.map((keys) => apiKeysList.push(keys.api_key)));
+  return apiKeysList;
 };
-
-getAllApikey();
 
 // router.route("/").get(async (req, res) => {
 //   await user

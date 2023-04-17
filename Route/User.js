@@ -2,14 +2,13 @@ const router = require("express").Router();
 let user = require("../Modal/User.model");
 let apiKeyModel = require("../Modal/ApiKey.model");
 const Joi = require("joi");
+const jwt = require("jsonwebtoken");
+const jwtAuth = require("../Middleware/JwtAuth");
+require("dotenv").config();
 
 let apiKey = "saahil";
 
-const genAPIKey = () => {
-  return [...Array(30)]
-    .map((e) => ((Math.random() * 36) | 0).toString(36))
-    .join("");
-};
+const genAPIKey = require("crypto").randomBytes(32).toString("hex");
 
 const getAllApikey = async () => {
   const apiKeysList = [];
@@ -20,14 +19,14 @@ const getAllApikey = async () => {
   return apiKeysList;
 };
 
-// router.route("/").get(async (req, res) => {
-//   await user
-//     .find()
-//     .then((users) => res.json(users))
-//     .catch((err) => res.status(400).json("Error" + err));
-// });
+router.route("/").get(jwtAuth, async (req, res) => {
+  await user
+    .find()
+    .then((users) => res.json(users))
+    .catch((err) => res.status(400).json("Error" + err));
+});
 
-router.route("/validateuser").get(async (req, res) => {
+router.route("/validateuser").post(async (req, res) => {
   if (req.query.api_key == apiKey) {
     const schema = Joi.object({
       email: Joi.string().required(),
@@ -48,7 +47,12 @@ router.route("/validateuser").get(async (req, res) => {
         .findOne(userCredentials)
         .then((user) => {
           if (user) {
-            res.status(200).json("Success");
+            const accessToken = jwt.sign(
+              { email: req.body.email },
+              process.env.auth_key_secret,
+              { expiresIn: "30m" }
+            );
+            res.status(200).json({ accessToken: accessToken });
           } else {
             res.status(400).json("INVALID Credentails");
           }
@@ -102,13 +106,12 @@ router.route("/adduser").post(async (req, res) => {
   if (validation.error) {
     res.send(validation.error.message);
   } else {
-    const apiKey = genAPIKey();
     const userData = req.body;
     const newUser = new user({
       first_name: userData.first_name,
       last_name: userData.last_name,
       email: userData.email,
-      api_key: apiKey,
+      api_key: genAPIKey,
       usage: 50,
       password: userData.password,
       phone: userData.phone,
@@ -118,7 +121,7 @@ router.route("/adduser").post(async (req, res) => {
 
     const newApiKey = new apiKeyModel({
       email: userData.email,
-      api_key: apiKey,
+      api_key: genAPIKey,
       usage: 50,
     });
 

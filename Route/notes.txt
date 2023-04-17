@@ -1,1 +1,4 @@
 CLEAN UP IF ELSE API KEY IN FUTURE
+Write about apiKeys
+Write About Json web tokens
+write about vercel serverless routing

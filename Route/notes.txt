@@ -1,4 +1,6 @@
 CLEAN UP IF ELSE API KEY IN FUTURE
+write about express
+write about mongoose and db
 Write about apiKeys
 Write About Json web tokens
 write about vercel serverless routing

@@ -27,40 +27,36 @@ router.route("/").get(jwtAuth, async (req, res) => {
 });
 
 router.route("/validateemployer").post(async (req, res) => {
-  if (req.query.api_key == apiKey) {
-    const schema = Joi.object({
-      email: Joi.string().required(),
-      password: Joi.string().required(),
-    });
+  const schema = Joi.object({
+    email: Joi.string().required(),
+    password: Joi.string().required(),
+  });
 
-    const validation = schema.validate(req.body);
+  const validation = schema.validate(req.body);
 
-    if (validation.error) {
-      res.send(validation.error.message);
-    } else {
-      const userCredentials = {
-        email: req.body.email,
-        password: req.body.password,
-      };
-
-      await employer
-        .findOne(userCredentials)
-        .then((user) => {
-          if (user) {
-            const accessToken = jwt.sign(
-              { email: req.body.email },
-              process.env.auth_key_secret,
-              { expiresIn: "30m" }
-            );
-            res.status(200).json({ accessToken: accessToken });
-          } else {
-            res.status(400).json("INVALID Credentails");
-          }
-        })
-        .catch((err) => res.status(400).json(err));
-    }
+  if (validation.error) {
+    res.send(validation.error.message);
   } else {
-    res.send("unathorized access");
+    const userCredentials = {
+      email: req.body.email,
+      password: req.body.password,
+    };
+
+    await employer
+      .findOne(userCredentials)
+      .then((user) => {
+        if (user) {
+          const accessToken = jwt.sign(
+            { email: req.body.email },
+            process.env.auth_key_secret,
+            { expiresIn: "30m" }
+          );
+          res.status(200).json({ accessToken: accessToken });
+        } else {
+          res.status(400).json("INVALID Credentails");
+        }
+      })
+      .catch((err) => res.status(400).json(err));
   }
 });
 

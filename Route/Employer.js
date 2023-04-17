@@ -26,7 +26,7 @@ router.route("/").get(jwtAuth, async (req, res) => {
     .catch((err) => res.status(400).json("Error" + err));
 });
 
-router.route("/validateemployer").get(async (req, res) => {
+router.route("/validateemployer").post(async (req, res) => {
   if (req.query.api_key == apiKey) {
     const schema = Joi.object({
       email: Joi.string().required(),

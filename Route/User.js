@@ -53,7 +53,7 @@ router.route("/validateuser").post(async (req, res) => {
           );
           res.status(200).json({ accessToken: accessToken });
         } else {
-          res.status(404).json("INVALID Credentails");
+          res.status(204).json("INVALID Credentails");
         }
       })
       .catch((err) => res.status(400).json(err));

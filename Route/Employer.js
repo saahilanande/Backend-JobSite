@@ -5,6 +5,8 @@ const Joi = require("joi");
 const jwt = require("jsonwebtoken");
 const jwtAuth = require("../Middleware/JwtAuth");
 require("dotenv").config();
+const cors = require("cors");
+router.use(cors());
 
 let apiKey = "saahil";
 

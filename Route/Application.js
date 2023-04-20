@@ -1,6 +1,8 @@
 const router = require("express").Router();
 let application = require("../Modal/Application.model");
 const Joi = require("joi");
+const cors = require("cors");
+router.use(cors());
 
 let apiKey = "saahil";
 

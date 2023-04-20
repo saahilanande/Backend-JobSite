@@ -1,6 +1,8 @@
 const router = require("express").Router();
 let post = require("../Modal/Postings.model");
 const Joi = require("joi");
+const cors = require("cors");
+router.use(cors());
 
 let apiKey = "saahil";
 

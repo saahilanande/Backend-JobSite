@@ -10,7 +10,6 @@ let apiKey = "saahil";
 
 const genAPIKey = require("crypto").randomBytes(32).toString("hex");
 
-
 router.route("/").get(jwtAuth, async (req, res) => {
   await user
     .find()
@@ -86,7 +85,7 @@ router.route("/adduser").post(async (req, res) => {
     password: Joi.string().alphanum().required(),
     phone: Joi.number().integer().min(10000000).max(99999999999),
     location: Joi.string().min(2),
-    skills: listSchema.required(),
+    skills: listSchema,
   });
 
   const validation = schema.validate(req.body);

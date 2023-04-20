@@ -127,7 +127,7 @@ router.route("/addemployer").post(async (req, res) => {
       await newEmployer
         .save()
         .then(() => {
-          res.json("New Employer Added").status(201);
+          res.status(201).json("New Employer Added");
         })
         .catch((err) => {
           res.status(400).json("Error" + err);

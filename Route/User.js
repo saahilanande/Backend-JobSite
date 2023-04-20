@@ -138,7 +138,7 @@ router.route("/adduser").post(async (req, res) => {
       await newUser
         .save()
         .then(() => {
-          res.json("New User Added").status(201);
+          res.status(201).json("New User Added");
         })
         .catch((err) => {
           res.status(400).json("Error" + err);

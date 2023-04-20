@@ -10,15 +10,6 @@ let apiKey = "saahil";
 
 const genAPIKey = require("crypto").randomBytes(32).toString("hex");
 
-const getAllApikey = async () => {
-  const apiKeysList = [];
-  await apiKeyModel
-    .find()
-    .select("api_key -_id")
-    .then((data) => data.map((keys) => apiKeysList.push(keys.api_key)));
-  return apiKeysList;
-};
-
 router.route("/").get(jwtAuth, async (req, res) => {
   await employer
     .find()
@@ -82,7 +73,8 @@ router.route("/:id").get(async (req, res) => {
 router.route("/addemployer").post(async (req, res) => {
   const schema = Joi.object({
     company_name: Joi.string().min(2).required(),
-    name: Joi.string().min(2).required(),
+    first_name: Joi.string().min(2).required(),
+    last_name: Joi.string().min(2).required(),
     email: Joi.string().min(2).required(),
     password: Joi.string().alphanum().required(),
     phone: Joi.number().integer().min(10000000).max(99999999999),
@@ -99,7 +91,8 @@ router.route("/addemployer").post(async (req, res) => {
     const employerData = req.body;
     const newEmployer = new employer({
       company_name: employerData.company_name,
-      name: employerData.name,
+      first_name: employerData.first_name,
+      last_name: employerData.last_name,
       email: employerData.email,
       password: employerData.password,
       api_key: genAPIKey,

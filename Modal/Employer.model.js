@@ -3,7 +3,8 @@ const mongoose = require("mongoose");
 const EmployerSchema = new mongoose.Schema(
   {
     company_name: { type: String, lowercase: true },
-    name: { type: String, lowercase: true, required: true },
+    first_name: { type: String, lowercase: true, required: true },
+    last_name: { type: String, lowercase: true, required: true },
     email: { type: String, lowercase: true, required: true },
     password: { type: String, required: true },
     api_key: { type: String, lowercase: true, required: true },

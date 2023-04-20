@@ -10,14 +10,6 @@ let apiKey = "saahil";
 
 const genAPIKey = require("crypto").randomBytes(32).toString("hex");
 
-const getAllApikey = async () => {
-  const apiKeysList = [];
-  await apiKeyModel
-    .find()
-    .select("api_key -_id")
-    .then((data) => data.map((keys) => apiKeysList.push(keys.api_key)));
-  return apiKeysList;
-};
 
 router.route("/").get(jwtAuth, async (req, res) => {
   await user

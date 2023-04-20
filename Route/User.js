@@ -27,6 +27,7 @@ router.route("/validateuser").post(async (req, res) => {
 
   const validation = schema.validate(req.body);
 
+  //validate the object recevied during post request
   if (validation.error) {
     res.send(validation.error.message);
   } else {
@@ -35,6 +36,7 @@ router.route("/validateuser").post(async (req, res) => {
       password: req.body.password,
     };
 
+    //moongoose call to find the user in user collection
     await user
       .findOne(userCredentials)
       .then((user) => {
@@ -92,40 +94,51 @@ router.route("/adduser").post(async (req, res) => {
 
   const validation = schema.validate(req.body);
 
+  //validate the object recevied during post request
   if (validation.error) {
     res.send(validation.error.message);
   } else {
-    const userData = req.body;
-    const newUser = new user({
-      first_name: userData.first_name,
-      last_name: userData.last_name,
-      email: userData.email,
-      api_key: genAPIKey,
-      usage: 50,
-      password: userData.password,
-      phone: userData.phone,
-      location: userData.location,
-      skills: userData.skills,
-    });
+    //check email already exsist in the database
+    const emailFound = await user
+      .findOne({ email: req.body.email })
+      .catch((err) => console.log(err));
 
-    const newApiKey = new apiKeyModel({
-      email: userData.email,
-      api_key: genAPIKey,
-      usage: 50,
-    });
+    if (emailFound) {
+      res.status(208).json("Already Exisit");
+    } else {
+      //add user to database
+      const userData = req.body;
+      const newUser = new user({
+        first_name: userData.first_name,
+        last_name: userData.last_name,
+        email: userData.email,
+        api_key: genAPIKey,
+        usage: 50,
+        password: userData.password,
+        phone: userData.phone,
+        location: userData.location,
+        skills: userData.skills,
+      });
 
-    await newApiKey.save().catch((err) => {
-      res.status(400).json("Error" + err);
-    });
+      const newApiKey = new apiKeyModel({
+        email: userData.email,
+        api_key: genAPIKey,
+        usage: 50,
+      });
 
-    await newUser
-      .save()
-      .then(() => {
-        res.json("New User Added");
-      })
-      .catch((err) => {
+      await newApiKey.save().catch((err) => {
         res.status(400).json("Error" + err);
       });
+
+      await newUser
+        .save()
+        .then(() => {
+          res.json("New User Added").status(201);
+        })
+        .catch((err) => {
+          res.status(400).json("Error" + err);
+        });
+    }
   }
 });
 

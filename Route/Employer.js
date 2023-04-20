@@ -90,39 +90,49 @@ router.route("/addemployer").post(async (req, res) => {
   if (validation.error) {
     res.send(validation.error.message);
   } else {
-    const employerData = req.body;
-    const newEmployer = new employer({
-      company_name: employerData.company_name,
-      first_name: employerData.first_name,
-      last_name: employerData.last_name,
-      email: employerData.email,
-      password: employerData.password,
-      api_key: genAPIKey,
-      usage: 50,
-      phone: employerData.phone,
-      location: employerData.location,
-      industry: employerData.industry,
-      company_description: employerData.company_description,
-    });
+    //check email already exsist in the database
+    const emailFound = await employer
+      .findOne({ email: req.body.email })
+      .catch((err) => console.log(err));
 
-    const newApiKey = new apiKeyModel({
-      email: employerData.email,
-      api_key: apiKey,
-      usage: 50,
-    });
+    if (emailFound) {
+      res.status(208).json("Already Exisit");
+    } else {
+      //add new employer to database
+      const employerData = req.body;
+      const newEmployer = new employer({
+        company_name: employerData.company_name,
+        first_name: employerData.first_name,
+        last_name: employerData.last_name,
+        email: employerData.email,
+        password: employerData.password,
+        api_key: genAPIKey,
+        usage: 50,
+        phone: employerData.phone,
+        location: employerData.location,
+        industry: employerData.industry,
+        company_description: employerData.company_description,
+      });
 
-    await newApiKey.save().catch((err) => {
-      res.status(400).json("Error" + err);
-    });
+      const newApiKey = new apiKeyModel({
+        email: employerData.email,
+        api_key: apiKey,
+        usage: 50,
+      });
 
-    await newEmployer
-      .save()
-      .then(() => {
-        res.json("New Employer Added");
-      })
-      .catch((err) => {
+      await newApiKey.save().catch((err) => {
         res.status(400).json("Error" + err);
       });
+
+      await newEmployer
+        .save()
+        .then(() => {
+          res.json("New Employer Added").status(201);
+        })
+        .catch((err) => {
+          res.status(400).json("Error" + err);
+        });
+    }
   }
 });
 

@@ -129,7 +129,7 @@ router.route("/adduser").post(async (req, res) => {
       await newApiKey
         .save()
         .then(() => {
-          res.json("New User Added").status(201);
+          res.json("New User Added");
         })
         .catch((err) => {
           res.status(400).json("Error" + err);

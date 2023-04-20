@@ -126,9 +126,14 @@ router.route("/adduser").post(async (req, res) => {
         usage: 50,
       });
 
-      await newApiKey.save().catch((err) => {
-        res.status(400).json("Error" + err);
-      });
+      await newApiKey
+        .save()
+        .then(() => {
+          res.json("New User Added").status(201);
+        })
+        .catch((err) => {
+          res.status(400).json("Error" + err);
+        });
 
       await newUser
         .save()

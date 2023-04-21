@@ -46,7 +46,13 @@ router.route("/validateuser").post(async (req, res) => {
             process.env.auth_key_secret,
             { expiresIn: "30m" }
           );
-          res.status(200).json({ accessToken: accessToken });
+          res
+            .status(200)
+            .json({
+              email: user.email,
+              accessToken: accessToken,
+              api_key: user.api_key,
+            });
         } else {
           res.status(204).json("INVALID Credentails");
         }

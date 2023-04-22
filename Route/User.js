@@ -4,11 +4,11 @@ let apiKeyModel = require("../Modal/ApiKey.model");
 const Joi = require("joi");
 const jwt = require("jsonwebtoken");
 const jwtAuth = require("../Middleware/JwtAuth");
+let getAllApikey = require("../Middleware/GetAllApiKey");
 require("dotenv").config();
 const cors = require("cors");
 router.use(cors());
 
-let apiKey = "saahil";
 
 const genAPIKey = require("crypto").randomBytes(32).toString("hex");
 
@@ -46,13 +46,11 @@ router.route("/validateuser").post(async (req, res) => {
             process.env.auth_key_secret,
             { expiresIn: "30m" }
           );
-          res
-            .status(200)
-            .json({
-              email: user.email,
-              accessToken: accessToken,
-              api_key: user.api_key,
-            });
+          res.status(200).json({
+            email: user.email,
+            accessToken: accessToken,
+            api_key: user.api_key,
+          });
         } else {
           res.status(204).json("INVALID Credentails");
         }
@@ -62,7 +60,7 @@ router.route("/validateuser").post(async (req, res) => {
 });
 
 router.route("/:id").get(async (req, res) => {
-  if (req.query.api_key == apiKey) {
+  if (getAllApikey().then((apikeys) => apikeys.includes(req.query.api_key))) {
     await user
       .findById(req.params.id)
       .then((user) => {
@@ -154,7 +152,7 @@ router.route("/adduser").post(async (req, res) => {
 });
 
 router.route("/delete/:id").delete(async (req, res) => {
-  if (req.query.api_key == apiKey) {
+  if (getAllApikey().then((apikeys) => apikeys.includes(req.query.api_key))) {
     const id = req.params.id;
     await user
       .findByIdAndDelete(id)
@@ -176,7 +174,7 @@ router.route("/delete/:id").delete(async (req, res) => {
 });
 
 router.route("/update/:id").put(async (req, res) => {
-  if (req.query.api_key == apiKey) {
+  if (getAllApikey().then((apikeys) => apikeys.includes(req.query.api_key))) {
     const id = req.params.id;
 
     await user

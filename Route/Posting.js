@@ -1,20 +1,24 @@
 const router = require("express").Router();
 let post = require("../Modal/Postings.model");
+let getAllApikey = require("../Middleware/GetAllApiKey");
 const Joi = require("joi");
 const cors = require("cors");
 router.use(cors());
 
-let apiKey = "saahil";
 
-// router.route("/").get(async (req, res) => {
-//   await post
-//     .find()
-//     .then((exe) => res.json(exe))
-//     .catch((err) => res.status(400).json("Error" + err));
-// });
+router.route("/").get(async (req, res) => {
+  if (getAllApikey().then((apikeys) => apikeys.includes(req.query.api_key))) {
+    await post
+      .find()
+      .then((exe) => res.json(exe))
+      .catch((err) => res.status(400).json("Error" + err));
+  } else {
+    res.send("unathorized access");
+  }
+});
 
 router.route("/:id").get(async (req, res) => {
-  if (req.query.api_key == apiKey) {
+  if (getAllApikey().then((apikeys) => apikeys.includes(req.query.api_key))) {
     await post
       .findById(req.params.id)
       .then((emp) => {
@@ -33,7 +37,7 @@ router.route("/:id").get(async (req, res) => {
 });
 
 router.route("/addpost").post(async (req, res) => {
-  if (req.query.api_key == apiKey) {
+  if (getAllApikey().then((apikeys) => apikeys.includes(req.query.api_key))) {
     const schema = Joi.object({
       employer_id: Joi.required(),
       title: Joi.string().min(2).required(),
@@ -75,7 +79,7 @@ router.route("/addpost").post(async (req, res) => {
 });
 
 router.route("/delete/:id").delete(async (req, res) => {
-  if (req.query.api_key == apiKey) {
+  if (getAllApikey().then((apikeys) => apikeys.includes(req.query.api_key))) {
     const id = req.params.id;
     await post
       .findByIdAndDelete(id)
@@ -94,7 +98,7 @@ router.route("/delete/:id").delete(async (req, res) => {
 });
 
 router.route("/update/:id").put(async (req, res) => {
-  if (req.query.api_key == apiKey) {
+  if (getAllApikey().then((apikeys) => apikeys.includes(req.query.api_key))) {
     const id = req.params.id;
 
     await post

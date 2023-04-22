@@ -4,11 +4,11 @@ let apiKeyModel = require("../Modal/ApiKey.model");
 const Joi = require("joi");
 const jwt = require("jsonwebtoken");
 const jwtAuth = require("../Middleware/JwtAuth");
+let getAllApikey = require("../Middleware/GetAllApiKey");
 require("dotenv").config();
 const cors = require("cors");
 router.use(cors());
 
-let apiKey = "saahil";
 
 const genAPIKey = require("crypto").randomBytes(32).toString("hex");
 
@@ -54,7 +54,7 @@ router.route("/validateemployer").post(async (req, res) => {
 });
 
 router.route("/:id").get(async (req, res) => {
-  if (req.query.api_key == apiKey) {
+  if (getAllApikey().then((apikeys) => apikeys.includes(req.query.api_key))) {
     await employer
       .findById(req.params.id)
       .then((emp) => {
@@ -137,7 +137,7 @@ router.route("/addemployer").post(async (req, res) => {
 });
 
 router.route("/delete/:id").delete(async (req, res) => {
-  if (req.query.api_key == apiKey) {
+  if (getAllApikey().then((apikeys) => apikeys.includes(req.query.api_key))) {
     const id = req.params.id;
     await employer
       .findByIdAndDelete(id)
@@ -156,7 +156,7 @@ router.route("/delete/:id").delete(async (req, res) => {
 });
 
 router.route("/update/:id").put(async (req, res) => {
-  if (req.query.api_key == apiKey) {
+  if (getAllApikey().then((apikeys) => apikeys.includes(req.query.api_key))) {
     const id = req.params.id;
 
     await employer

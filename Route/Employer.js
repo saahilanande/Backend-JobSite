@@ -9,14 +9,17 @@ require("dotenv").config();
 const cors = require("cors");
 router.use(cors());
 
-
 const genAPIKey = require("crypto").randomBytes(32).toString("hex");
 
 router.route("/").get(jwtAuth, async (req, res) => {
-  await employer
-    .find()
-    .then((emp) => res.json(emp))
-    .catch((err) => res.status(400).json("Error" + err));
+  if (getAllApikey().then((apikeys) => apikeys.includes(req.query.api_key))) {
+    await employer
+      .find()
+      .then((emp) => res.json(emp))
+      .catch((err) => res.status(400).json("Error" + err));
+  } else {
+    res.send("unathorized access");
+  }
 });
 
 router.route("/validateemployer").post(async (req, res) => {

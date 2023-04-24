@@ -5,7 +5,6 @@ const Joi = require("joi");
 const cors = require("cors");
 router.use(cors());
 
-
 router.route("/").get(async (req, res) => {
   if (getAllApikey().then((apikeys) => apikeys.includes(req.query.api_key))) {
     await post
@@ -43,9 +42,9 @@ router.route("/addpost").post(async (req, res) => {
       title: Joi.string().min(2).required(),
       job_description: Joi.string().min(2).required(),
       job_type: Joi.string().required(),
+      employment_type: Joi.string(),
       location: Joi.string().min(2),
       salary: Joi.number().required(),
-      post_date: Joi.date(),
     });
 
     const validation = schema.validate(req.body);
@@ -59,9 +58,9 @@ router.route("/addpost").post(async (req, res) => {
         title: postData.title,
         job_description: postData.job_description,
         job_type: postData.job_type,
+        employment_type: postData.employment_type,
         location: postData.location,
         salary: postData.salary,
-        post_date: postData.postData,
       });
 
       await newPost

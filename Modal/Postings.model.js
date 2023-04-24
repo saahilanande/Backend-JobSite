@@ -1,3 +1,4 @@
+const { string } = require("joi");
 const mongoose = require("mongoose");
 
 const postingSchema = new mongoose.Schema(
@@ -6,11 +7,14 @@ const postingSchema = new mongoose.Schema(
     title: { type: String, lowercase: true, required: true },
     job_description: { type: String, lowercase: true },
     job_type: { type: String, lowercase: true },
-    location: { type: String, lowercase: true },
-    salary: { type: Number, min: 0, max: 9999999, default: 0 },
-    post_date: { type: Date, require: true },
+    employment_type: { type: String },
+    location: { type: String },
+    salary: { type: Number, min: 0, max: 999999999, default: 0 },
   },
-  { collection: "Posting" }
+  {
+    collection: "Posting",
+    timestamps: true,
+  }
 );
 
 const Posting = mongoose.model("Posting", postingSchema);

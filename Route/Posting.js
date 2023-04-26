@@ -7,8 +7,24 @@ router.use(cors());
 
 router.route("/").get(async (req, res) => {
   if (getAllApikey().then((apikeys) => apikeys.includes(req.query.api_key))) {
+    let filterObj = {};
+    if (req.query.job_type) {
+      filterObj.job_type = req.query.job_type;
+    }
+    if (req.query.employment_type) {
+      filterObj.employment_type = req.query.employment_type;
+    }
+    if (req.query.updatedAt) {
+      const date = new Date();
+      const previousDate = new Date();
+      previousDate.setDate(previousDate.getDate() - 5);
+      filterObj.updatedAt = {
+        $gte: new Date(previousDate),
+        $lt: new Date(date),
+      };
+    }
     await post
-      .find()
+      .find(filterObj)
       .then((exe) => res.json(exe))
       .catch((err) => res.status(400).json("Error" + err));
   } else {

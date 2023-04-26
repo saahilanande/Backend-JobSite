@@ -5,19 +5,31 @@ const Joi = require("joi");
 const cors = require("cors");
 router.use(cors());
 
+//Endpoint to get all the post
 router.route("/").get(async (req, res) => {
   if (getAllApikey().then((apikeys) => apikeys.includes(req.query.api_key))) {
     let filterObj = {};
+    //If jobtype filter is provided
     if (req.query.job_type) {
       filterObj.job_type = req.query.job_type;
     }
+    //If employment filter is provided
     if (req.query.employment_type) {
       filterObj.employment_type = req.query.employment_type;
     }
+    //If Date filter is provided
     if (req.query.updatedAt) {
       const date = new Date();
       const previousDate = new Date();
-      previousDate.setDate(previousDate.getDate() - 5);
+      if (req.query.updatedAt === "today") {
+        previousDate.setDate(previousDate.getDate() - 1);
+      }
+      if (req.query.updatedAt === "week") {
+        previousDate.setDate(previousDate.getDate() - 7);
+      }
+      if (req.query.updatedAt === "month") {
+        previousDate.setDate(previousDate.getDate() - 30);
+      }
       filterObj.updatedAt = {
         $gte: new Date(previousDate),
         $lt: new Date(date),

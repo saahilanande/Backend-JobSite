@@ -7,7 +7,10 @@ router.use(cors());
 
 //Endpoint to get all the post
 router.route("/").get(async (req, res) => {
-  if (getAllApikey().then((apikeys) => apikeys.includes(req.query.api_key))) {
+  if (
+    getAllApikey().then((apikeys) => apikeys.includes(req.query.api_key)) ||
+    req.query.api_key != ""
+  ) {
     let filterObj = {};
     //If jobtype filter is provided
     if (req.query.job_type) {
@@ -29,6 +32,9 @@ router.route("/").get(async (req, res) => {
       }
       if (req.query.updatedAt === "month") {
         previousDate.setDate(previousDate.getDate() - 30);
+      }
+      if (req.query.updatedAt === "anytime") {
+        previousDate.setDate(previousDate.getDate() - 600);
       }
       filterObj.updatedAt = {
         $gte: new Date(previousDate),

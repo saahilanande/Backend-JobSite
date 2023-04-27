@@ -4,3 +4,13 @@ write about mongoose and db
 Write about apiKeys
 Write About Json web tokens
 write about vercel serverless routing
+
+
+getAllApikey().then((apikeys) => {
+    if (apikeys.includes(req.query.api_key)) {
+
+      
+    } else {
+      res.send("unathorized access");
+    }
+  });

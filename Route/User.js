@@ -50,7 +50,7 @@ router.route("/validateuser").post(async (req, res) => {
             { expiresIn: "30m" }
           );
           res.status(200).json({
-            email: user.email,
+            userId: user.id,
             accessToken: accessToken,
             api_key: user.api_key,
           });

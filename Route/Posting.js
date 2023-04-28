@@ -42,7 +42,7 @@ router.route("/").get(async (req, res) => {
       };
     }
     await post
-      .find(filterObj)
+      .find({employment_type:fulltime})
       .then((exe) => res.json(exe))
       .catch((err) => res.status(400).json("Error" + err));
   } else {

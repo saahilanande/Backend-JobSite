@@ -35,6 +35,25 @@ router.route("/:id").get(async (req, res) => {
   }
 });
 
+router.route("/applied/:id").get(async (req, res) => {
+  if (getAllApikey().then((apikeys) => apikeys.includes(req.query.api_key))) {
+    await application
+      .find({ user_id: req.params.id })
+      .then((emp) => {
+        if (!emp) {
+          return res
+            .status(404)
+            .json("User not Find with ID:" + emp)
+            .send();
+        }
+        res.send(emp);
+      })
+      .catch((err) => res.status(400).json("Error" + err));
+  } else {
+    res.send("unathorized access");
+  }
+});
+
 router.route("/addapplication").post(async (req, res) => {
   if (getAllApikey().then((apikeys) => apikeys.includes(req.query.api_key))) {
     const schema = Joi.object({

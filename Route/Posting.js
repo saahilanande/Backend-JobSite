@@ -24,6 +24,9 @@ router.route("/").get(async (req, res) => {
     if (req.query.updatedAt) {
       const date = new Date();
       const previousDate = new Date();
+      if (req.query.updatedAt === "anytime") {
+        previousDate.setDate(previousDate.getDate() - 600);
+      }
       if (req.query.updatedAt === "today") {
         previousDate.setDate(previousDate.getDate() - 1);
       }
@@ -33,16 +36,13 @@ router.route("/").get(async (req, res) => {
       if (req.query.updatedAt === "month") {
         previousDate.setDate(previousDate.getDate() - 30);
       }
-      if (req.query.updatedAt === "anytime") {
-        previousDate.setDate(previousDate.getDate() - 600);
-      }
       filterObj.updatedAt = {
         $gte: new Date(previousDate),
         $lt: new Date(date),
       };
     }
     await post
-      .find({employment_type:fulltime})
+      .find(filterObj)
       .then((exe) => res.json(exe))
       .catch((err) => res.status(400).json("Error" + err));
   } else {

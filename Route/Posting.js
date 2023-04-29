@@ -3,6 +3,7 @@ let post = require("../Modal/Postings.model");
 let getAllApikey = require("../Middleware/GetAllApiKey");
 const Joi = require("joi");
 const cors = require("cors");
+const { query } = require("express");
 router.use(cors());
 
 //Endpoint to get all the post
@@ -12,6 +13,12 @@ router.route("/").get(async (req, res) => {
     req.query.api_key != ""
   ) {
     let filterObj = {};
+
+    //if JobTitle filter provided
+    if (req.query.title && req.query.title != "") {
+      filterObj.title = { $regex: req.query.title };
+    }
+
     //If jobtype filter is provided
     if (req.query.job_type) {
       filterObj.job_type = req.query.job_type;
@@ -41,6 +48,7 @@ router.route("/").get(async (req, res) => {
         $lt: new Date(date),
       };
     }
+    console.log(filterObj);
     await post
       .find(filterObj)
       .then((exe) => res.json(exe))

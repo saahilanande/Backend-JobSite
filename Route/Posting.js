@@ -14,9 +14,14 @@ router.route("/").get(async (req, res) => {
   ) {
     let filterObj = {};
 
+    //if location filter provided
+    if (req.query.location && req.query.location != "") {
+      filterObj.location = { $regex: req.query.location, $options: "i" };
+    }
+
     //if JobTitle filter provided
     if (req.query.title && req.query.title != "") {
-      filterObj.title = { $regex: req.query.title };
+      filterObj.title = { $regex: req.query.title, $options: "i" };
     }
 
     //If jobtype filter is provided

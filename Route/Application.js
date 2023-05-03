@@ -130,3 +130,16 @@ router.route("/update/:id").put(async (req, res) => {
 });
 
 module.exports = router;
+
+
+// .aggregate([
+//   { $match: { user_id: userId } },
+//   {
+//     $lookup: {
+//       from: "Posting",
+//       localField: "job_id",
+//       foreignField: "_id",
+//       as: "JobApplied",
+//     },
+//   },
+// ])

@@ -94,7 +94,7 @@ router.route("/adduser").post(async (req, res) => {
     last_name: Joi.string().min(2).required(),
     email: Joi.string().min(2).required(),
     password: Joi.string().alphanum().required(),
-    phone: Joi.number().integer().min(10000000).max(99999999999),
+    phone: Joi.number().integer(),
     location: Joi.string().min(2),
     skills: listSchema,
   });

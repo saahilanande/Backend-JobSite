@@ -64,7 +64,7 @@ router.route("/").get(jwtAuth, async (req, res) => {
   }
 });
 
-router.route("/:id").get(async (req, res) => {
+router.route("/:id").get(jwtAuth,async (req, res) => {
   if (getAllApikey().then((apikeys) => apikeys.includes(req.query.api_key))) {
     await post
       .findById(req.params.id)
@@ -83,7 +83,7 @@ router.route("/:id").get(async (req, res) => {
   }
 });
 
-router.route("/addpost").post(async (req, res) => {
+router.route("/addpost").post(jwtAuth,async (req, res) => {
   if (getAllApikey().then((apikeys) => apikeys.includes(req.query.api_key))) {
     const schema = Joi.object({
       employer_id: Joi.required(),
@@ -125,7 +125,7 @@ router.route("/addpost").post(async (req, res) => {
   }
 });
 
-router.route("/delete/:id").delete(async (req, res) => {
+router.route("/delete/:id").delete(jwtAuth,async (req, res) => {
   if (getAllApikey().then((apikeys) => apikeys.includes(req.query.api_key))) {
     const id = req.params.id;
     await post
@@ -144,7 +144,7 @@ router.route("/delete/:id").delete(async (req, res) => {
   }
 });
 
-router.route("/update/:id").put(async (req, res) => {
+router.route("/update/:id").put(jwtAuth,async (req, res) => {
   if (getAllApikey().then((apikeys) => apikeys.includes(req.query.api_key))) {
     const id = req.params.id;
 

@@ -60,7 +60,7 @@ router.route("/validateemployer").post(async (req, res) => {
   }
 });
 
-router.route("/:id").get(async (req, res) => {
+router.route("/:id").get(jwtAuth, async (req, res) => {
   if (getAllApikey().then((apikeys) => apikeys.includes(req.query.api_key))) {
     await employer
       .findById(req.params.id)
@@ -143,7 +143,7 @@ router.route("/addemployer").post(async (req, res) => {
   }
 });
 
-router.route("/delete/:id").delete(async (req, res) => {
+router.route("/delete/:id").delete(jwtAuth, async (req, res) => {
   if (getAllApikey().then((apikeys) => apikeys.includes(req.query.api_key))) {
     const id = req.params.id;
     await employer
@@ -162,7 +162,7 @@ router.route("/delete/:id").delete(async (req, res) => {
   }
 });
 
-router.route("/update/:id").put(async (req, res) => {
+router.route("/update/:id").put(jwtAuth, async (req, res) => {
   if (getAllApikey().then((apikeys) => apikeys.includes(req.query.api_key))) {
     const id = req.params.id;
 

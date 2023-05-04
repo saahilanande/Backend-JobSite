@@ -3,9 +3,10 @@ let application = require("../Modal/Application.model");
 let getAllApikey = require("../Middleware/GetAllApiKey");
 const Joi = require("joi");
 const cors = require("cors");
+const jwtAuth = require("../Middleware/JwtAuth");
 router.use(cors());
 
-router.route("/").get(async (req, res) => {
+router.route("/").get(jwtAuth, async (req, res) => {
   if (getAllApikey().then((apikeys) => apikeys.includes(req.query.api_key))) {
     await application
       .find()
@@ -16,7 +17,7 @@ router.route("/").get(async (req, res) => {
   }
 });
 
-router.route("/:id").get(async (req, res) => {
+router.route("/:id").get(jwtAuth, async (req, res) => {
   if (getAllApikey().then((apikeys) => apikeys.includes(req.query.api_key))) {
     await application
       .findById(req.params.id)
@@ -35,7 +36,7 @@ router.route("/:id").get(async (req, res) => {
   }
 });
 
-router.route("/applied/:id").get(async (req, res) => {
+router.route("/applied/:id").get(jwtAuth, async (req, res) => {
   if (getAllApikey().then((apikeys) => apikeys.includes(req.query.api_key))) {
     await application
       .find({ user_id: req.params.id })
@@ -54,7 +55,7 @@ router.route("/applied/:id").get(async (req, res) => {
   }
 });
 
-router.route("/addapplication").post(async (req, res) => {
+router.route("/addapplication").post(jwtAuth, async (req, res) => {
   if (getAllApikey().then((apikeys) => apikeys.includes(req.query.api_key))) {
     const schema = Joi.object({
       job_id: Joi.required(),
@@ -90,7 +91,7 @@ router.route("/addapplication").post(async (req, res) => {
   }
 });
 
-router.route("/delete/:id").delete(async (req, res) => {
+router.route("/delete/:id").delete(jwtAuth, async (req, res) => {
   if (getAllApikey().then((apikeys) => apikeys.includes(req.query.api_key))) {
     const id = req.params.id;
     await application
@@ -109,7 +110,7 @@ router.route("/delete/:id").delete(async (req, res) => {
   }
 });
 
-router.route("/update/:id").put(async (req, res) => {
+router.route("/update/:id").put(jwtAuth, async (req, res) => {
   if (getAllApikey().then((apikeys) => apikeys.includes(req.query.api_key))) {
     const id = req.params.id;
 
@@ -130,7 +131,6 @@ router.route("/update/:id").put(async (req, res) => {
 });
 
 module.exports = router;
-
 
 // .aggregate([
 //   { $match: { user_id: userId } },

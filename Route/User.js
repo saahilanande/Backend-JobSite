@@ -154,7 +154,7 @@ router.route("/adduser").post(async (req, res) => {
   }
 });
 
-router.route("/delete/:id").delete(async (req, res) => {
+router.route("/delete/:id").delete(jwtAuth,async (req, res) => {
   if (getAllApikey().then((apikeys) => apikeys.includes(req.query.api_key))) {
     const id = req.params.id;
     await user
@@ -176,7 +176,7 @@ router.route("/delete/:id").delete(async (req, res) => {
   }
 });
 
-router.route("/update/:id").put(async (req, res) => {
+router.route("/update/:id").put(jwtAuth,async (req, res) => {
   if (getAllApikey().then((apikeys) => apikeys.includes(req.query.api_key))) {
     const id = req.params.id;
 

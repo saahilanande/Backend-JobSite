@@ -62,7 +62,7 @@ router.route("/validateuser").post(async (req, res) => {
   }
 });
 
-router.route("/:id").get(async (req, res) => {
+router.route("/:id").get(jwtAuth, async (req, res) => {
   if (getAllApikey().then((apikeys) => apikeys.includes(req.query.api_key))) {
     await user
       .findById(req.params.id)

@@ -4,10 +4,11 @@ let getAllApikey = require("../Middleware/GetAllApiKey");
 const Joi = require("joi");
 const cors = require("cors");
 const { query } = require("express");
+const jwtAuth = require("../Middleware/JwtAuth");
 router.use(cors());
 
 //Endpoint to get all the post
-router.route("/").get(async (req, res) => {
+router.route("/").get(jwtAuth, async (req, res) => {
   if (
     getAllApikey().then((apikeys) => apikeys.includes(req.query.api_key)) ||
     req.query.api_key != ""

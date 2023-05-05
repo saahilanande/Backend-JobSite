@@ -63,7 +63,7 @@ router.route("/validateuser").post(async (req, res) => {
 });
 
 router.route("/:id").get(jwtAuth, async (req, res) => {
-  if (CheckApiKey().then((apikeys) => apikeys.includes(req.query.api_key))) {
+  if (req.query.api_key && (await CheckApiKey(req.query.api_key))) {
     await user
       .findById(req.params.id)
       .then((user) => {
@@ -155,7 +155,7 @@ router.route("/adduser").post(async (req, res) => {
 });
 
 router.route("/delete/:id").delete(jwtAuth, async (req, res) => {
-  if (getAllApikey().then((apikeys) => apikeys.includes(req.query.api_key))) {
+  if (req.query.api_key && (await CheckApiKey(req.query.api_key))) {
     const id = req.params.id;
     await user
       .findByIdAndDelete(id)
@@ -177,7 +177,7 @@ router.route("/delete/:id").delete(jwtAuth, async (req, res) => {
 });
 
 router.route("/update/:id").put(jwtAuth, async (req, res) => {
-  if (getAllApikey().then((apikeys) => apikeys.includes(req.query.api_key))) {
+  if (req.query.api_key && (await CheckApiKey(req.query.api_key))) {
     const id = req.params.id;
 
     await user

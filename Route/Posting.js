@@ -1,6 +1,6 @@
 const router = require("express").Router();
 let post = require("../Modal/Postings.model");
-let getAllApikey = require("../Middleware/GetAllApiKey");
+let getAllApikey = require("../Middleware/CheckApiKey");
 const Joi = require("joi");
 const cors = require("cors");
 const { query } = require("express");
@@ -64,7 +64,7 @@ router.route("/").get(jwtAuth, async (req, res) => {
   }
 });
 
-router.route("/:id").get(jwtAuth,async (req, res) => {
+router.route("/:id").get(jwtAuth, async (req, res) => {
   if (getAllApikey().then((apikeys) => apikeys.includes(req.query.api_key))) {
     await post
       .findById(req.params.id)
@@ -83,7 +83,7 @@ router.route("/:id").get(jwtAuth,async (req, res) => {
   }
 });
 
-router.route("/addpost").post(jwtAuth,async (req, res) => {
+router.route("/addpost").post(jwtAuth, async (req, res) => {
   if (getAllApikey().then((apikeys) => apikeys.includes(req.query.api_key))) {
     const schema = Joi.object({
       employer_id: Joi.required(),
@@ -125,7 +125,7 @@ router.route("/addpost").post(jwtAuth,async (req, res) => {
   }
 });
 
-router.route("/delete/:id").delete(jwtAuth,async (req, res) => {
+router.route("/delete/:id").delete(jwtAuth, async (req, res) => {
   if (getAllApikey().then((apikeys) => apikeys.includes(req.query.api_key))) {
     const id = req.params.id;
     await post
@@ -144,7 +144,7 @@ router.route("/delete/:id").delete(jwtAuth,async (req, res) => {
   }
 });
 
-router.route("/update/:id").put(jwtAuth,async (req, res) => {
+router.route("/update/:id").put(jwtAuth, async (req, res) => {
   if (getAllApikey().then((apikeys) => apikeys.includes(req.query.api_key))) {
     const id = req.params.id;
 

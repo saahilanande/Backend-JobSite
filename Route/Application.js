@@ -1,6 +1,6 @@
 const router = require("express").Router();
 let application = require("../Modal/Application.model");
-let getAllApikey = require("../Middleware/GetAllApiKey");
+let getAllApikey = require("../Middleware/CheckApiKey");
 const Joi = require("joi");
 const cors = require("cors");
 const jwtAuth = require("../Middleware/JwtAuth");

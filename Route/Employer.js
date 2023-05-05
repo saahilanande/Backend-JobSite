@@ -4,7 +4,7 @@ let apiKeyModel = require("../Modal/ApiKey.model");
 const Joi = require("joi");
 const jwt = require("jsonwebtoken");
 const jwtAuth = require("../Middleware/JwtAuth");
-let getAllApikey = require("../Middleware/GetAllApiKey");
+let getAllApikey = require("../Middleware/CheckApiKey");
 require("dotenv").config();
 const cors = require("cors");
 router.use(cors());

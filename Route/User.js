@@ -4,7 +4,7 @@ let apiKeyModel = require("../Modal/ApiKey.model");
 const Joi = require("joi");
 const jwt = require("jsonwebtoken");
 const jwtAuth = require("../Middleware/JwtAuth");
-let getAllApikey = require("../Middleware/GetAllApiKey");
+let CheckApiKey = require("../Middleware/CheckApiKey");
 require("dotenv").config();
 const cors = require("cors");
 router.use(cors());
@@ -12,7 +12,7 @@ router.use(cors());
 const genAPIKey = require("crypto").randomBytes(32).toString("hex");
 
 router.route("/").get(jwtAuth, async (req, res) => {
-  if (getAllApikey().then((apikeys) => apikeys.includes(req.query.api_key))) {
+  if (req.query.api_key && (await CheckApiKey(req.query.api_key))) {
     await user
       .find()
       .then((users) => res.json(users))
@@ -63,7 +63,7 @@ router.route("/validateuser").post(async (req, res) => {
 });
 
 router.route("/:id").get(jwtAuth, async (req, res) => {
-  if (getAllApikey().then((apikeys) => apikeys.includes(req.query.api_key))) {
+  if (CheckApiKey().then((apikeys) => apikeys.includes(req.query.api_key))) {
     await user
       .findById(req.params.id)
       .then((user) => {
@@ -154,7 +154,7 @@ router.route("/adduser").post(async (req, res) => {
   }
 });
 
-router.route("/delete/:id").delete(jwtAuth,async (req, res) => {
+router.route("/delete/:id").delete(jwtAuth, async (req, res) => {
   if (getAllApikey().then((apikeys) => apikeys.includes(req.query.api_key))) {
     const id = req.params.id;
     await user
@@ -176,7 +176,7 @@ router.route("/delete/:id").delete(jwtAuth,async (req, res) => {
   }
 });
 
-router.route("/update/:id").put(jwtAuth,async (req, res) => {
+router.route("/update/:id").put(jwtAuth, async (req, res) => {
   if (getAllApikey().then((apikeys) => apikeys.includes(req.query.api_key))) {
     const id = req.params.id;
 

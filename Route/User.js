@@ -9,9 +9,12 @@ require("dotenv").config();
 const cors = require("cors");
 router.use(cors());
 
+//Generating a random 32 lenght string for api key
 const genAPIKey = require("crypto").randomBytes(32).toString("hex");
 
+//Base endpoint url for fetching all the users
 router.route("/").get(jwtAuth, async (req, res) => {
+  //Checking if the endpoint call is send with a correct apikey with checkApiKey middleware
   if (req.query.api_key && (await CheckApiKey(req.query.api_key))) {
     await user
       .find()
@@ -22,15 +25,18 @@ router.route("/").get(jwtAuth, async (req, res) => {
   }
 });
 
+//endpoint for validating a user with email and password
+//After validating jwt token is added in the respose body with email id and password
 router.route("/validateuser").post(async (req, res) => {
+  //Creating a schema for the incoming object from the post request
   const schema = Joi.object({
     email: Joi.string().required(),
     password: Joi.string().required(),
   });
 
+  //validate the object recevied during post request
   const validation = schema.validate(req.body);
 
-  //validate the object recevied during post request
   if (validation.error) {
     res.send(validation.error.message);
   } else {
@@ -44,6 +50,7 @@ router.route("/validateuser").post(async (req, res) => {
       .findOne(userCredentials)
       .then((user) => {
         if (user) {
+          //Assigning jwt token
           const accessToken = jwt.sign(
             { email: req.body.email },
             process.env.auth_key_secret,
@@ -62,7 +69,9 @@ router.route("/validateuser").post(async (req, res) => {
   }
 });
 
+//End point for fetching a single user with given Id
 router.route("/:id").get(jwtAuth, async (req, res) => {
+  //Checking if the endpoint call is send with a correct apikey with checkApiKey middleware
   if (req.query.api_key && (await CheckApiKey(req.query.api_key))) {
     await user
       .findById(req.params.id)
@@ -81,7 +90,9 @@ router.route("/:id").get(jwtAuth, async (req, res) => {
   }
 });
 
+//Endpoint to Add a new user to the Database
 router.route("/adduser").post(async (req, res) => {
+  //Creating a schema for the incoming object from the post request
   const skillSchema = Joi.object({
     skill_name: Joi.string(),
     skill_level: Joi.number(),
@@ -99,9 +110,10 @@ router.route("/adduser").post(async (req, res) => {
     skills: listSchema,
   });
 
+  //validate the object recevied during post request
   const validation = schema.validate(req.body);
 
-  //validate the object recevied during post request
+  //If Object is validated when recevied during post request
   if (validation.error) {
     res.send(validation.error.message);
   } else {
@@ -127,12 +139,14 @@ router.route("/adduser").post(async (req, res) => {
         skills: userData.skills,
       });
 
+      //Generating a new Apikey for the new User
       const newApiKey = new apiKeyModel({
         email: userData.email,
         api_key: genAPIKey,
         usage: 50,
       });
 
+      //Adding the new Apikey to the Apikey Collection
       await newApiKey
         .save()
         .then(() => {
@@ -154,7 +168,9 @@ router.route("/adduser").post(async (req, res) => {
   }
 });
 
+//Endpoint to delete a single user with his UserId
 router.route("/delete/:id").delete(jwtAuth, async (req, res) => {
+  //Checking if the endpoint call is send with a correct apikey with checkApiKey middleware
   if (req.query.api_key && (await CheckApiKey(req.query.api_key))) {
     const id = req.params.id;
     await user
@@ -176,7 +192,9 @@ router.route("/delete/:id").delete(jwtAuth, async (req, res) => {
   }
 });
 
+//Updating the details to a single user using his userId
 router.route("/update/:id").put(jwtAuth, async (req, res) => {
+  //Checking if the endpoint call is send with a correct apikey with checkApiKey middleware
   if (req.query.api_key && (await CheckApiKey(req.query.api_key))) {
     const id = req.params.id;
 

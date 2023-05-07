@@ -6,7 +6,9 @@ const cors = require("cors");
 const jwtAuth = require("../Middleware/JwtAuth");
 router.use(cors());
 
+//Endpoint to fetch all the applications
 router.route("/").get(jwtAuth, async (req, res) => {
+  //Checking if the endpoint call is send with a correct apikey with checkApiKey middleware
   if (req.query.api_key && (await CheckApiKey(req.query.api_key))) {
     await application
       .find()
@@ -17,35 +19,15 @@ router.route("/").get(jwtAuth, async (req, res) => {
   }
 });
 
-router.route("/:id").get(jwtAuth, async (req, res) => {
-  if (req.query.api_key && (await CheckApiKey(req.query.api_key))) {
-    await application
-      .findById(req.params.id)
-      .then((emp) => {
-        if (!emp) {
-          return res
-            .status(404)
-            .json("User not Find with ID:" + emp)
-            .send();
-        }
-        res.send(emp);
-      })
-      .catch((err) => res.status(400).json("Error" + err));
-  } else {
-    res.send("unathorized access");
-  }
-});
-
+//Get a Single Application
 router.route("/applied/:id").get(jwtAuth, async (req, res) => {
+  //Checking if the endpoint call is send with a correct apikey with checkApiKey middleware
   if (req.query.api_key && (await CheckApiKey(req.query.api_key))) {
     await application
       .find({ user_id: req.params.id })
       .then((emp) => {
         if (!emp) {
-          return res
-            .status(404)
-            .json("User not Find with ID:" + emp)
-            .send();
+          return res.status(404).json("Application not Find with ID:").send();
         }
         res.send(emp);
       })
@@ -55,8 +37,10 @@ router.route("/applied/:id").get(jwtAuth, async (req, res) => {
   }
 });
 
+//Endpoint to Add a new Application
 router.route("/addapplication").post(jwtAuth, async (req, res) => {
   if (req.query.api_key && (await CheckApiKey(req.query.api_key))) {
+    //Creating a schema for the incoming request body
     const schema = Joi.object({
       job_id: Joi.required(),
       user_id: Joi.required(),
@@ -64,6 +48,7 @@ router.route("/addapplication").post(jwtAuth, async (req, res) => {
       resume_file: Joi.string(),
     });
 
+    //Validating the post Request Objectg
     const validation = schema.validate(req.body);
 
     if (validation.error) {
@@ -91,6 +76,7 @@ router.route("/addapplication").post(jwtAuth, async (req, res) => {
   }
 });
 
+//Endpoint to delete ad single post with given Id
 router.route("/delete/:id").delete(jwtAuth, async (req, res) => {
   if (req.query.api_key && (await CheckApiKey(req.query.api_key))) {
     const id = req.params.id;
@@ -110,7 +96,9 @@ router.route("/delete/:id").delete(jwtAuth, async (req, res) => {
   }
 });
 
+//Endpoint to update a single Application
 router.route("/update/:id").put(jwtAuth, async (req, res) => {
+  //Checking if the endpoint call is send with a correct apikey with checkApiKey middleware
   if (req.query.api_key && (await CheckApiKey(req.query.api_key))) {
     const id = req.params.id;
 
@@ -131,15 +119,3 @@ router.route("/update/:id").put(jwtAuth, async (req, res) => {
 });
 
 module.exports = router;
-
-// .aggregate([
-//   { $match: { user_id: userId } },
-//   {
-//     $lookup: {
-//       from: "Posting",
-//       localField: "job_id",
-//       foreignField: "_id",
-//       as: "JobApplied",
-//     },
-//   },
-// ])

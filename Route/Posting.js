@@ -9,6 +9,7 @@ router.use(cors());
 
 //Endpoint to get all the post
 router.route("/").get(jwtAuth, async (req, res) => {
+  //Checking if the endpoint call is send with a correct apikey with checkApiKey middleware
   if (req.query.api_key && (await CheckApiKey(req.query.api_key))) {
     let filterObj = {};
 
@@ -61,7 +62,9 @@ router.route("/").get(jwtAuth, async (req, res) => {
   }
 });
 
+//Endpoint to delete a single post
 router.route("/:id").get(jwtAuth, async (req, res) => {
+  //Checking if the endpoint call is send with a correct apikey with checkApiKey middleware
   if (req.query.api_key && (await CheckApiKey(req.query.api_key))) {
     await post
       .findById(req.params.id)
@@ -80,8 +83,11 @@ router.route("/:id").get(jwtAuth, async (req, res) => {
   }
 });
 
+//Endpoint to add a new post in the database
 router.route("/addpost").post(jwtAuth, async (req, res) => {
+  //Checking if the endpoint call is send with a correct apikey with checkApiKey middleware
   if (req.query.api_key && (await CheckApiKey(req.query.api_key))) {
+    //Creating a schema object for the incoming request body to validate
     const schema = Joi.object({
       employer_id: Joi.required(),
       title: Joi.string().min(2).required(),
@@ -92,6 +98,7 @@ router.route("/addpost").post(jwtAuth, async (req, res) => {
       salary: Joi.number().required(),
     });
 
+    //Validate the Object from the post
     const validation = schema.validate(req.body);
 
     if (validation.error) {
@@ -122,7 +129,9 @@ router.route("/addpost").post(jwtAuth, async (req, res) => {
   }
 });
 
+//Endpoint to delete a single post
 router.route("/delete/:id").delete(jwtAuth, async (req, res) => {
+  //Checking if the endpoint call is send with a correct apikey with checkApiKey middleware
   if (req.query.api_key && (await CheckApiKey(req.query.api_key))) {
     const id = req.params.id;
     await post
@@ -141,7 +150,9 @@ router.route("/delete/:id").delete(jwtAuth, async (req, res) => {
   }
 });
 
+//Endpoint to update a single object
 router.route("/update/:id").put(jwtAuth, async (req, res) => {
+  //Checking if the endpoint call is send with a correct apikey with checkApiKey middleware
   if (req.query.api_key && (await CheckApiKey(req.query.api_key))) {
     const id = req.params.id;
 
